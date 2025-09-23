@@ -22,7 +22,7 @@ const Signup: React.FC = () => {
                 role: role
             });
 
-            // console.log('Backend response:', backendResponse.data);
+            console.log('Backend response:', backendResponse.data);
 
             // Store token and user data
             // localStorage.setItem('token', backendResponse.data.token);
