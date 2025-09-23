@@ -16,7 +16,6 @@ const Signup: React.FC = () => {
         setLoading(role);
 
         try {
-            // Send token to your backend for verification and role-specific handling
             const backendResponse = await axios.post('https://favebackend.onrender.com/auth/google', {
                 credential: token,
                 role: role
@@ -24,19 +23,41 @@ const Signup: React.FC = () => {
 
             console.log('Backend response:', backendResponse.data);
 
-            // Store token and user data
-            // localStorage.setItem('token', backendResponse.data.token);
-            // localStorage.setItem('user', JSON.stringify(backendResponse.data.user));
-            // localStorage.setItem('userRole', role);
+            // Handle the actual backend response structure
+            const { success, sessionToken, artist, fan } = backendResponse.data;
 
-            // Redirect based on role
-            if (backendResponse.data.user.profileCompleted) {
-                window.location.href = `/${role}/Header`;
+            if (!success) {
+                alert('Authentication failed. Please try again.');
+                return;
             }
+
+            // Get the user data based on role
+            const userData = role === 'artist' ? artist : fan;
+
+            if (!userData) {
+                alert('User data not found in response.');
+                return;
+            }
+
+            // Store token and user data with correct property names
+            localStorage.setItem('token', sessionToken);
+            localStorage.setItem('user', JSON.stringify(userData));
+            localStorage.setItem('userRole', role);
+
+            // Check if profile is completed (adjust logic based on your backend)
+            const hasProfile = userData.profile && Object.keys(userData.profile).length > 0;
+
+            // Redirect based on profile completion
+            if (hasProfile) {
+                window.location.href = `/${role}/dashboard`; // or wherever you want to redirect
+            } else {
+                // Redirect to profile setup if profile is incomplete
+                window.location.href = `/${role}/setup-profile`;
+            }
+
         } catch (error: any) {
             console.error('Backend API error:', error);
 
-            // Handle specific error messages from backend
             if (error.response?.data?.message) {
                 alert(`Signup failed: ${error.response.data.message}`);
             } else if (error.response?.status === 400) {
@@ -90,7 +111,7 @@ const Signup: React.FC = () => {
                                 size="large"
                                 text="signup_with"
                                 logo_alignment="left"
-                                // disabled={loading !== null}
+                                disabled={loading !== null}
                                 type="standard"
                                 cancel_on_tap_outside={true}
                                 itp_support={false}
@@ -119,7 +140,7 @@ const Signup: React.FC = () => {
                                 size="large"
                                 text="signup_with"
                                 logo_alignment="left"
-                                // disabled={loading !== null}
+                                disabled={loading !== null}
                                 type="standard"
                                 cancel_on_tap_outside={true}
                                 itp_support={false}
