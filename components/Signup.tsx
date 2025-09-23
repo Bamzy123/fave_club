@@ -32,9 +32,7 @@ const Signup: React.FC = () => {
 
             // Redirect based on role
             if (backendResponse.data.user.profileCompleted) {
-                window.location.href = `/${role}/dashboard`;
-            } else {
-                window.location.href = `/${role}/complete-profile`;
+                window.location.href = `/${role}/Header`;
             }
 
         } catch (error: any) {
