@@ -90,6 +90,7 @@ const Signup: React.FC = () => {
                                 onSuccess={onGoogleSuccess('fan')}
                                 onError={onGoogleError}
                                 useOneTap={false}
+                                auto_select={ false }
                                 theme="outline"
                                 size="large"
                                 text="signup_with"
@@ -115,6 +116,7 @@ const Signup: React.FC = () => {
                                 onSuccess={onGoogleSuccess('artist')}
                                 onError={onGoogleError}
                                 useOneTap={false}
+                                auto_select={ false }
                                 theme="outline"
                                 size="large"
                                 text="signup_with"
