@@ -17,7 +17,7 @@ const Signup: React.FC = () => {
 
         try {
             // Send token to your backend for verification and role-specific handling
-            const backendResponse = await axios.post('https://favebackend.onrender.com/api/auth/google', {
+            const backendResponse = await axios.post('https://favebackend.onrender.com/auth/goggle', {
                 credential: token,
                 role: role
             });
