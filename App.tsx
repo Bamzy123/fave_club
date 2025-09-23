@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Artistry from './components/Artistry';
 import Legacy from './components/Legacy';
 import Future from './components/Future';
 import Footer from './components/Footer';
+import Signup from './components/Signup';
 
 const ChatBubble = () => (
     <button className="fixed bottom-6 right-6 bg-brand-pink text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-pink-500 transition-colors">
@@ -15,15 +16,26 @@ const ChatBubble = () => (
 );
 
 const App: React.FC = () => {
+  const [page, setPage] = useState('home');
+
+  const navigate = (pageName: string) => {
+    setPage(pageName);
+    window.scrollTo(0, 0);
+  };
+
   return (
     <div className="bg-brand-dark font-sans text-white overflow-x-hidden">
-      <Header />
-      <main>
-        <Hero />
-        <Artistry />
-        <Legacy />
-        <Future />
-      </main>
+      <Header onNavigate={navigate} />
+      {page === 'home' ? (
+        <main>
+          <Hero onNavigate={navigate} />
+          <Artistry onNavigate={navigate} />
+          <Legacy onNavigate={navigate} />
+          <Future onNavigate={navigate} />
+        </main>
+      ) : (
+        <Signup />
+      )}
       <Footer />
       <ChatBubble />
     </div>

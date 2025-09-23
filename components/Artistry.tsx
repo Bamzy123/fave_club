@@ -38,7 +38,7 @@ const FeatureCard = ({ bgColor, icon, title, description }: { bgColor: string; i
 );
 
 
-const Artistry: React.FC = () => {
+const Artistry: React.FC<{ onNavigate: (page: string) => void }> = ({ onNavigate }) => {
     return (
         <section className="bg-brand-dark py-20 px-6 md:px-12">
             <div className="container mx-auto text-center">
@@ -46,7 +46,7 @@ const Artistry: React.FC = () => {
                 <p className="mt-4 max-w-2xl mx-auto text-gray-400">
                     We provide the tools and platform for artists to thrive. Focus on your craft, we'll handle the rest.
                 </p>
-                <button className="mt-8 bg-brand-pink text-white font-bold py-3 px-8 rounded-full text-md hover:scale-105 transform transition-transform duration-300">
+                <button onClick={() => onNavigate('signup')} className="mt-8 bg-brand-pink text-white font-bold py-3 px-8 rounded-full text-md hover:scale-105 transform transition-transform duration-300">
                     Start Creating
                 </button>
             </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Hero: React.FC = () => {
+const Hero: React.FC<{ onNavigate: (page: string) => void }> = ({ onNavigate }) => {
   return (
     <section className="relative h-screen min-h-[700px] flex items-center justify-center text-center text-white">
       <div
@@ -20,7 +20,7 @@ const Hero: React.FC = () => {
         <p className="mt-4 max-w-lg mx-auto text-lg text-gray-300">
           Discover, create, and share music like never before. Your journey in sound starts here.
         </p>
-        <button className="mt-8 bg-brand-pink text-white font-bold py-4 px-10 rounded-full text-lg hover:scale-105 transform transition-transform duration-300">
+        <button onClick={() => onNavigate('signup')} className="mt-8 bg-brand-pink text-white font-bold py-4 px-10 rounded-full text-lg hover:scale-105 transform transition-transform duration-300">
           Explore Now
         </button>
       </div>
