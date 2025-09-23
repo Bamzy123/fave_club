@@ -17,7 +17,7 @@ const Signup: React.FC = () => {
 
         try {
             // Send token to your backend for verification and role-specific handling
-            const backendResponse = await axios.post('https://favebackend.onrender.com/auth/goggle', {
+            const backendResponse = await axios.post('https://favebackend.onrender.com/auth/google', {
                 credential: token,
                 role: role
             });
@@ -90,7 +90,7 @@ const Signup: React.FC = () => {
                                 size="large"
                                 text="signup_with"
                                 logo_alignment="left"
-                                disabled={loading !== null}
+                                // disabled={loading !== null}
                                 type="standard"
                                 cancel_on_tap_outside={true}
                                 itp_support={false}
