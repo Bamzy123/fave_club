@@ -1,83 +1,13 @@
-import React, { useState } from 'react';
-import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
-import axios from 'axios';
+import React from 'react';
+import { GoogleLogin } from '@react-oauth/google';
 
 const Signup: React.FC = () => {
-    const [loading, setLoading] = useState<'fan' | 'artist' | null>(null);
+    // @ts-ignore
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-    const onGoogleSuccess = (role: 'fan' | 'artist') => async (response: CredentialResponse) => {
-        const token = response.credential;
-        if (!token) {
-            console.error('Google credential is missing.');
-            alert('Google sign-in failed. Please try again.');
-            return;
-        }
-
-        setLoading(role);
-
-        try {
-            const backendResponse = await axios.get('https://favebackend.onrender.com/auth/goggle', {
-                params: {
-                    credential: token,
-                    role: role
-                }
-            });
-
-            console.log('Backend response:', backendResponse.data);
-
-            // Handle the actual backend response structure
-            const { success, sessionToken, artist, fan } = backendResponse.data;
-
-            if (!success) {
-                alert('Authentication failed. Please try again.');
-                return;
-            }
-
-            // Get the user data based on role
-            const userData = role === 'artist' ? artist : fan;
-
-            if (!userData) {
-                alert('User data not found in response.');
-                return;
-            }
-
-            // Store token and user data with correct property names
-            localStorage.setItem('token', sessionToken);
-            localStorage.setItem('user', JSON.stringify(userData));
-            localStorage.setItem('userRole', role);
-
-            // Check if profile is completed (adjust logic based on your backend)
-            const hasProfile = userData.profile && Object.keys(userData.profile).length > 0;
-
-            // Redirect based on profile completion
-            if (hasProfile) {
-                window.location.href = `/${role}/dashboard`; // or wherever you want to redirect
-            } else {
-                // Redirect to profile setup if profile is incomplete
-                window.location.href = `/${role}/setup-profile`;
-            }
-
-        } catch (error: any) {
-            console.error('Backend API error:', error);
-
-            if (error.response?.data?.message) {
-                alert(`Signup failed: ${error.response.data.message}`);
-            } else if (error.response?.status === 400) {
-                alert('Invalid request. Please try again.');
-            } else if (error.response?.status === 500) {
-                alert('Server error. Please try again later.');
-            } else {
-                alert('Network error. Please check your connection.');
-            }
-        } finally {
-            setLoading(null);
-        }
-    };
-
-    const onGoogleError = () => {
-        console.error('Google sign-in error');
-        alert('Google sign-in failed. Please try again.');
-        setLoading(null);
+    const handleGoogleLogin = () => {
+        // Correctly initiates the OAuth flow by redirecting the browser to the backend.
+        window.location.href = `${backendUrl}/auth/google`;
     };
 
     return (
@@ -105,24 +35,10 @@ const Signup: React.FC = () => {
                             Discover new music, connect with artists, and be part of a vibrant community.
                         </p>
                         <div className="w-full flex justify-center items-center">
-                            <GoogleLogin
-                                onSuccess={onGoogleSuccess('fan')}
-                                onError={onGoogleError}
-                                useOneTap={false}
-                                theme="outline"
-                                size="large"
-                                text="signup_with"
-                                logo_alignment="left"
-                                type="standard"
-                                cancel_on_tap_outside={true}
-                                itp_support={false}
-                                state_cookie_domain="single_host_origin"
-                            />
-                            {loading === 'fan' && (
-                                <div className="ml-3 flex items-center">
-                                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-                                </div>
-                            )}
+                            {/* Correctly initiating the login flow with a button redirect */}
+                            <button onClick={handleGoogleLogin} className="mt-8 bg-brand-pink text-white font-bold py-4 px-10 rounded-full text-lg hover:scale-105 transform transition-transform duration-300">
+                                Sign up with Google
+                            </button>
                         </div>
                     </div>
 
@@ -133,24 +49,10 @@ const Signup: React.FC = () => {
                             Unleash your artistry, distribute your music, and build your legacy with our powerful tools.
                         </p>
                         <div className="w-full flex justify-center items-center">
-                            <GoogleLogin
-                                onSuccess={onGoogleSuccess('artist')}
-                                onError={onGoogleError}
-                                useOneTap={false}
-                                theme="outline"
-                                size="large"
-                                text="signup_with"
-                                logo_alignment="left"
-                                type="standard"
-                                cancel_on_tap_outside={true}
-                                itp_support={false}
-                                state_cookie_domain="single_host_origin"
-                            />
-                            {loading === 'artist' && (
-                                <div className="ml-3 flex items-center">
-                                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-                                </div>
-                            )}
+                            {/* Correctly initiating the login flow with a button redirect */}
+                            <button onClick={handleGoogleLogin} className="mt-8 bg-brand-pink text-white font-bold py-4 px-10 rounded-full text-lg hover:scale-105 transform transition-transform duration-300">
+                                Sign up with Google
+                            </button>
                         </div>
                     </div>
                 </div>
