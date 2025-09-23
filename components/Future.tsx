@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const ArtistCard = ({ name, genre, img, alignLeft = false, onNavigate }: { name: string; genre: string; img: string; alignLeft?: boolean; onNavigate: (page: string) => void; }) => (
     <div className={`bg-zinc-800 rounded-2xl overflow-hidden shadow-lg transform transition-transform duration-500 hover:scale-105 ${alignLeft ? 'md:self-start' : 'md:self-end'}`}>
@@ -16,8 +16,36 @@ const ArtistCard = ({ name, genre, img, alignLeft = false, onNavigate }: { name:
 
 
 const Future: React.FC<{ onNavigate: (page: string) => void }> = ({ onNavigate }) => {
+    const sectionRef = useRef<HTMLElement>(null);
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                    observer.unobserve(entry.target);
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        if (sectionRef.current) {
+            observer.observe(sectionRef.current);
+        }
+
+        return () => {
+            if (sectionRef.current) {
+                observer.unobserve(sectionRef.current);
+            }
+        };
+    }, []);
+
     return (
-        <section className="bg-brand-dark py-24 px-6 md:px-12">
+        <section
+            ref={sectionRef}
+            className={`bg-brand-dark py-24 px-6 md:px-12 transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+        >
             <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                 <div className="text-center lg:text-left">
                     <p className="text-brand-yellow font-semibold">The Next Wave</p>

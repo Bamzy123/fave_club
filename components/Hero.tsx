@@ -1,11 +1,39 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const Hero: React.FC<{ onNavigate: (page: string) => void }> = ({ onNavigate }) => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
+
   return (
-    <section className="relative h-screen min-h-[700px] flex items-center justify-center text-center text-white">
+    <section
+      ref={sectionRef}
+      className={`relative h-screen min-h-[700px] flex items-center justify-center text-center text-white transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+    >
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(https://picsum.photos/seed/musicfest/1920/1080)` }}
+        style={{ backgroundImage: `url(https://picsum.photos/seed/musicconcert/1920/1080)` }}
       >
         <div className="absolute inset-0 bg-black/60"></div>
         <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-transparent to-transparent"></div>

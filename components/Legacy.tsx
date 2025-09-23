@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const legacyItems = [
     { name: 'Amplify Your Voice', role: 'Singer, Songwriter', img: 'https://picsum.photos/seed/person1/100/100' },
@@ -23,8 +23,36 @@ const LegacyItem = ({ name, role, img, onNavigate }: { name: string; role: strin
 );
 
 const Legacy: React.FC<{ onNavigate: (page: string) => void }> = ({ onNavigate }) => {
+    const sectionRef = useRef<HTMLElement>(null);
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                    observer.unobserve(entry.target);
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        if (sectionRef.current) {
+            observer.observe(sectionRef.current);
+        }
+
+        return () => {
+            if (sectionRef.current) {
+                observer.unobserve(sectionRef.current);
+            }
+        };
+    }, []);
+
     return (
-        <section className="bg-brand-light py-20 px-6 md:px-12">
+        <section
+            ref={sectionRef}
+            className={`bg-brand-light py-20 px-6 md:px-12 transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+        >
             <div className="container mx-auto text-center">
                 <h2 className="font-serif text-5xl font-bold text-gray-900">Your Music, Your Legacy</h2>
                 <p className="mt-4 max-w-2xl mx-auto text-gray-600">
