@@ -26,9 +26,9 @@ const Signup: React.FC = () => {
             console.log('Backend response:', backendResponse.data);
 
             // Store token and user data
-            localStorage.setItem('token', backendResponse.data.token);
-            localStorage.setItem('user', JSON.stringify(backendResponse.data.user));
-            localStorage.setItem('userRole', role);
+            // localStorage.setItem('token', backendResponse.data.token);
+            // localStorage.setItem('user', JSON.stringify(backendResponse.data.user));
+            // localStorage.setItem('userRole', role);
 
             // Redirect based on role
             if (backendResponse.data.user.profileCompleted) {
