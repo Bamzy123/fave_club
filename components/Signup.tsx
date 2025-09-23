@@ -7,7 +7,6 @@ const Signup: React.FC = () => {
 
     const onGoogleSuccess = (role: 'fan' | 'artist') => async (response: CredentialResponse) => {
         const token = response.credential;
-        console.log('Google credential:', token);
         if (!token) {
             console.error('Google credential is missing.');
             alert('Google sign-in failed. Please try again.');
@@ -47,7 +46,6 @@ const Signup: React.FC = () => {
 
             // Check if profile is completed (adjust logic based on your backend)
             const hasProfile = userData.profile && Object.keys(userData.profile).length > 0;
-            console.log('Profile completion:', hasProfile);
 
             // Redirect based on profile completion
             if (hasProfile) {
@@ -113,7 +111,6 @@ const Signup: React.FC = () => {
                                 size="large"
                                 text="signup_with"
                                 logo_alignment="left"
-                                // disabled={loading !== null}
                                 type="standard"
                                 cancel_on_tap_outside={true}
                                 itp_support={false}
@@ -142,7 +139,6 @@ const Signup: React.FC = () => {
                                 size="large"
                                 text="signup_with"
                                 logo_alignment="left"
-                                // disabled={loading !== null}
                                 type="standard"
                                 cancel_on_tap_outside={true}
                                 itp_support={false}
