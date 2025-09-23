@@ -8,7 +8,7 @@ if (!rootElement) {
     throw new Error("Could not find root element to mount to");
 }
 
-const clientId = process.env.VITE_GOOGLE_CLIENT_ID;
+const clientId = '890611096481-h08nbfvc9ocbrl1iu460unabf4ge0m0v.apps.googleusercontent.com';
 
 const root = ReactDOM.createRoot(rootElement);
 root.render(
