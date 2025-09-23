@@ -111,7 +111,7 @@ const Signup: React.FC = () => {
                                 size="large"
                                 text="signup_with"
                                 logo_alignment="left"
-                                disabled={loading !== null}
+                                // disabled={loading !== null}
                                 type="standard"
                                 cancel_on_tap_outside={true}
                                 itp_support={false}
@@ -140,7 +140,7 @@ const Signup: React.FC = () => {
                                 size="large"
                                 text="signup_with"
                                 logo_alignment="left"
-                                disabled={loading !== null}
+                                // disabled={loading !== null}
                                 type="standard"
                                 cancel_on_tap_outside={true}
                                 itp_support={false}
