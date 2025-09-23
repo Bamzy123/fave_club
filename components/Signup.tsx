@@ -19,7 +19,7 @@ const Signup: React.FC = () => {
         try {
             // Send token to your backend for verification and role-specific handling
             const backendResponse = await axios.post('https://favebackend.onrender.com/api/auth/google', {
-                credential: token,  // Using credential instead of accessToken
+                credential: token,
                 role: role
             });
 
@@ -34,7 +34,6 @@ const Signup: React.FC = () => {
             if (backendResponse.data.user.profileCompleted) {
                 window.location.href = `/${role}/Header`;
             }
-
         } catch (error: any) {
             console.error('Backend API error:', error);
 
@@ -83,17 +82,20 @@ const Signup: React.FC = () => {
                         <p className="mt-4 text-gray-400 flex-grow mb-8">
                             Discover new music, connect with artists, and be part of a vibrant community.
                         </p>
-                        <div className="w-full flex justify-center">
+                        <div className="w-full flex justify-center items-center">
                             <GoogleLogin
                                 onSuccess={onGoogleSuccess('fan')}
                                 onError={onGoogleError}
                                 useOneTap={false}
-                                auto_select={ false }
                                 theme="outline"
                                 size="large"
                                 text="signup_with"
                                 logo_alignment="left"
                                 disabled={loading !== null}
+                                type="standard"
+                                cancel_on_tap_outside={true}
+                                itp_support={false}
+                                state_cookie_domain="single_host_origin"
                             />
                             {loading === 'fan' && (
                                 <div className="ml-3 flex items-center">
@@ -109,17 +111,20 @@ const Signup: React.FC = () => {
                         <p className="mt-4 text-gray-400 flex-grow mb-8">
                             Unleash your artistry, distribute your music, and build your legacy with our powerful tools.
                         </p>
-                        <div className="w-full flex justify-center">
+                        <div className="w-full flex justify-center items-center">
                             <GoogleLogin
                                 onSuccess={onGoogleSuccess('artist')}
                                 onError={onGoogleError}
                                 useOneTap={false}
-                                auto_select={ false }
                                 theme="outline"
                                 size="large"
                                 text="signup_with"
                                 logo_alignment="left"
                                 disabled={loading !== null}
+                                type="standard"
+                                cancel_on_tap_outside={true}
+                                itp_support={false}
+                                state_cookie_domain="single_host_origin"
                             />
                             {loading === 'artist' && (
                                 <div className="ml-3 flex items-center">
