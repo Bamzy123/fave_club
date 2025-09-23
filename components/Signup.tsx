@@ -16,9 +16,11 @@ const Signup: React.FC = () => {
         setLoading(role);
 
         try {
-            const backendResponse = await axios.post('https://favebackend.onrender.com/auth/goggle', {
-                credential: token,
-                role: role
+            const backendResponse = await axios.get('https://favebackend.onrender.com/auth/goggle', {
+                params: {
+                    credential: token,
+                    role: role
+                }
             });
 
             console.log('Backend response:', backendResponse.data);
