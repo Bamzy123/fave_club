@@ -14,7 +14,6 @@ const Signup: React.FC = () => {
         }
 
         setLoading(role);
-        console.log(`[${role}] Encoded JWT ID token: ${token}`);
 
         try {
             // Send token to your backend for verification and role-specific handling
@@ -23,7 +22,7 @@ const Signup: React.FC = () => {
                 role: role
             });
 
-            console.log('Backend response:', backendResponse.data);
+            // console.log('Backend response:', backendResponse.data);
 
             // Store token and user data
             // localStorage.setItem('token', backendResponse.data.token);
