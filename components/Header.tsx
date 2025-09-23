@@ -17,8 +17,8 @@ const Header: React.FC<{ onNavigate: (page: string) => void }> = ({ onNavigate }
             <Logo onClick={() => onNavigate('home')} />
             <nav className="hidden md:flex space-x-10 items-center">
                 <button onClick={() => onNavigate('home')} className="text-white hover:text-brand-pink transition-colors">Home</button>
-                <button onClick={() => onNavigate('signup')} className="text-white hover:text-brand-pink transition-colors">About</button>
-                <button onClick={() => onNavigate('signup')} className="text-white border border-white px-6 py-2 rounded-full hover:bg-white hover:text-brand-dark transition-colors">Contact</button>
+                <button className="text-white hover:text-brand-pink transition-colors">About</button>
+                <button className="text-white border border-white px-6 py-2 rounded-full hover:bg-white hover:text-brand-dark transition-colors">Contact</button>
             </nav>
             <button className="md:hidden text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -1,57 +1,69 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
+import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
+import axios from 'axios';
 
 const Signup: React.FC = () => {
-    
-    const handleCredentialResponse = (response: any) => {
-        console.log("Encoded JWT ID token: " + response.credential);
-        // Here you would send the token to your backend for verification
-        alert('Signup successful! Check the console for your token.');
-    };
+    const [loading, setLoading] = useState<'fan' | 'artist' | null>(null);
 
-    useEffect(() => {
-        const initializeGsi = () => {
-            const google = (window as any).google;
-            if (!google || !google.accounts || !google.accounts.id) {
-                console.error("Google Identity Services not available.");
-                return;
-            }
+    const onGoogleSuccess = (role: 'fan' | 'artist') => async (response: CredentialResponse) => {
+        const token = response.credential;
+        if (!token) {
+            console.error('Google credential is missing.');
+            alert('Google sign-in failed. Please try again.');
+            return;
+        }
 
-            google.accounts.id.initialize({
-                client_id: "1051618722983-18hfavntsgcr1hkefir2ehatpsrvt795.apps.googleusercontent.com",
-                callback: handleCredentialResponse
+        setLoading(role);
+        console.log(`[${role}] Encoded JWT ID token: ${token}`);
+
+        try {
+            // Send token to your backend for verification and role-specific handling
+            const backendResponse = await axios.post('https://favebackend.onrender.com/api/auth/google', {
+                credential: token,  // Using credential instead of accessToken
+                role: role
             });
 
-            const fanButtonParent = document.getElementById('google-signin-fan');
-            if (fanButtonParent) {
-                 google.accounts.id.renderButton(
-                    fanButtonParent,
-                    { theme: "outline", size: "large", type: 'standard', text: 'signup_with', logo_alignment: 'left' }
-                );
+            console.log('Backend response:', backendResponse.data);
+
+            // Store token and user data
+            localStorage.setItem('token', backendResponse.data.token);
+            localStorage.setItem('user', JSON.stringify(backendResponse.data.user));
+            localStorage.setItem('userRole', role);
+
+            // Redirect based on role
+            if (backendResponse.data.user.profileCompleted) {
+                window.location.href = `/${role}/dashboard`;
+            } else {
+                window.location.href = `/${role}/complete-profile`;
             }
 
-            const artistButtonParent = document.getElementById('google-signin-artist');
-            if (artistButtonParent) {
-                google.accounts.id.renderButton(
-                    artistButtonParent,
-                    { theme: "outline", size: "large", type: 'standard', text: 'signup_with', logo_alignment: 'left' }
-                );
+        } catch (error: any) {
+            console.error('Backend API error:', error);
+
+            // Handle specific error messages from backend
+            if (error.response?.data?.message) {
+                alert(`Signup failed: ${error.response.data.message}`);
+            } else if (error.response?.status === 400) {
+                alert('Invalid request. Please try again.');
+            } else if (error.response?.status === 500) {
+                alert('Server error. Please try again later.');
+            } else {
+                alert('Network error. Please check your connection.');
             }
-        };
+        } finally {
+            setLoading(null);
+        }
+    };
 
-        const interval = setInterval(() => {
-            if ((window as any).google?.accounts?.id) {
-                clearInterval(interval);
-                initializeGsi();
-            }
-        }, 100);
-
-        return () => clearInterval(interval);
-
-    }, []);
+    const onGoogleError = () => {
+        console.error('Google sign-in error');
+        alert('Google sign-in failed. Please try again.');
+        setLoading(null);
+    };
 
     return (
         <main className="relative min-h-screen flex items-center justify-center py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
-             <div
+            <div
                 className="absolute inset-0 bg-cover bg-center bg-no-repeat"
                 style={{ backgroundImage: `url(https://picsum.photos/seed/musicstudio/1920/1080)` }}
             >
@@ -73,16 +85,48 @@ const Signup: React.FC = () => {
                         <p className="mt-4 text-gray-400 flex-grow mb-8">
                             Discover new music, connect with artists, and be part of a vibrant community.
                         </p>
-                        <div id="google-signin-fan" className="w-full flex justify-center"></div>
+                        <div className="w-full flex justify-center">
+                            <GoogleLogin
+                                onSuccess={onGoogleSuccess('fan')}
+                                onError={onGoogleError}
+                                useOneTap={false}
+                                theme="outline"
+                                size="large"
+                                text="signup_with"
+                                logo_alignment="left"
+                                disabled={loading !== null}
+                            />
+                            {loading === 'fan' && (
+                                <div className="ml-3 flex items-center">
+                                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     {/* Artist Signup Card */}
                     <div className="bg-zinc-800/80 backdrop-blur-sm border border-zinc-700 rounded-2xl p-8 flex-1 flex flex-col items-center text-center transform transition-transform hover:scale-105 duration-300">
                         <h3 className="text-3xl font-bold text-white">For Artists</h3>
                         <p className="mt-4 text-gray-400 flex-grow mb-8">
-                           Unleash your artistry, distribute your music, and build your legacy with our powerful tools.
+                            Unleash your artistry, distribute your music, and build your legacy with our powerful tools.
                         </p>
-                        <div id="google-signin-artist" className="w-full flex justify-center"></div>
+                        <div className="w-full flex justify-center">
+                            <GoogleLogin
+                                onSuccess={onGoogleSuccess('artist')}
+                                onError={onGoogleError}
+                                useOneTap={false}
+                                theme="outline"
+                                size="large"
+                                text="signup_with"
+                                logo_alignment="left"
+                                disabled={loading !== null}
+                            />
+                            {loading === 'artist' && (
+                                <div className="ml-3 flex items-center">
+                                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
