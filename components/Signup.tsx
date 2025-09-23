@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
+import {CredentialResponse, GoogleLogin} from '@react-oauth/google';
 import axios from 'axios';
 
 const Signup: React.FC = () => {
