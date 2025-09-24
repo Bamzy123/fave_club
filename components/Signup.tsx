@@ -1,14 +1,20 @@
-// frontend/src/components/Signup.tsx
-
-import React, { useState } from 'react';
+import React from 'react';
+import { GoogleLogin } from '@react-oauth/google';
 
 const Signup: React.FC = () => {
-    const [loading, setLoading] = useState<'fan' | 'artist' | null>(null);
-
-    const handleGoogleSignIn = (role: 'fan' | 'artist') => {
-        setLoading(role);
+    const handleSuccess = (credentialResponse: any, role: 'fan' | 'artist') => {
+        // The ID token is received from Google and needs to be sent to your backend
+        const idToken = credentialResponse.credential;
+        
+        // This is a placeholder for your backend URL
         const backendUrl = import.meta.env.VITE_BACKEND_URL;
-        window.location.href = `${backendUrl}/auth/google`;
+        
+        // Redirect the user to the backend's Google callback URL with the ID token and role
+        window.location.href = `${backendUrl}/auth/google/callback?idToken=${idToken}&role=${role}`;
+    };
+
+    const handleError = () => {
+        console.log('Login Failed');
     };
 
     return (
@@ -35,20 +41,10 @@ const Signup: React.FC = () => {
                         <p className="mt-4 text-gray-400 flex-grow mb-8">
                             Discover new music, connect with artists, and be part of a vibrant community.
                         </p>
-                        <div className="w-full flex justify-center">
-                            <button
-                                onClick={() => handleGoogleSignIn('fan')}
-                                disabled={loading !== null}
-                                className="bg-white text-gray-800 font-bold py-3 px-6 rounded-full hover:bg-gray-200 transition-colors"
-                            >
-                                Sign in as Fan
-                            </button>
-                            {loading === 'fan' && (
-                                <div className="ml-3 flex items-center">
-                                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-                                </div>
-                            )}
-                        </div>
+                        <GoogleLogin
+                            onSuccess={(credentialResponse) => handleSuccess(credentialResponse, 'fan')}
+                            onError={handleError}
+                        />
                     </div>
 
                     {/* Artist Signup Card */}
@@ -57,20 +53,10 @@ const Signup: React.FC = () => {
                         <p className="mt-4 text-gray-400 flex-grow mb-8">
                             Unleash your artistry, distribute your music, and build your legacy with our powerful tools.
                         </p>
-                        <div className="w-full flex justify-center">
-                            <button
-                                onClick={() => handleGoogleSignIn('artist')}
-                                disabled={loading !== null}
-                                className="bg-white text-gray-800 font-bold py-3 px-6 rounded-full hover:bg-gray-200 transition-colors"
-                            >
-                                Sign in as Artist
-                            </button>
-                            {loading === 'artist' && (
-                                <div className="ml-3 flex items-center">
-                                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-                                </div>
-                            )}
-                        </div>
+                        <GoogleLogin
+                            onSuccess={(credentialResponse) => handleSuccess(credentialResponse, 'artist')}
+                            onError={handleError}
+                        />
                     </div>
                 </div>
             </div>
