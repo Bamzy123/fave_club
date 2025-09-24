@@ -1,62 +1,14 @@
+// frontend/src/components/Signup.tsx
+
 import React, { useState } from 'react';
-import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
-import axios from 'axios';
 
 const Signup: React.FC = () => {
     const [loading, setLoading] = useState<'fan' | 'artist' | null>(null);
 
-    const onGoogleSuccess = (role: 'fan' | 'artist') => async (response: CredentialResponse) => {
-        const token = response.credential;
-        if (!token) {
-            console.error('Google credential is missing.');
-            alert('Google sign-in failed. Please try again.');
-            return;
-        }
-
+    const handleGoogleSignIn = (role: 'fan' | 'artist') => {
         setLoading(role);
-        console.log(`[${role}] Encoded JWT ID token: ${token}`);
-
-        try {
-            // Send token to your backend for verification and role-specific handling
-            const backendResponse = await axios.post('https://favebackend.onrender.com/api/auth/google', {
-                credential: token,  // Using credential instead of accessToken
-                role: role
-            });
-
-            console.log('Backend response:', backendResponse.data);
-
-            // Store token and user data
-            // localStorage.setItem('token', backendResponse.data.token);
-            // localStorage.setItem('user', JSON.stringify(backendResponse.data.user));
-            // localStorage.setItem('userRole', role);
-
-            // Redirect based on role
-            if (backendResponse.data.user.profileCompleted) {
-                window.location.href = `/${role}/Header`;
-            }
-
-        } catch (error: any) {
-            console.error('Backend API error:', error);
-
-            // Handle specific error messages from backend
-            if (error.response?.data?.message) {
-                alert(`Signup failed: ${error.response.data.message}`);
-            } else if (error.response?.status === 400) {
-                alert('Invalid request. Please try again.');
-            } else if (error.response?.status === 500) {
-                alert('Server error. Please try again later.');
-            } else {
-                alert('Network error. Please check your connection.');
-            }
-        } finally {
-            setLoading(null);
-        }
-    };
-
-    const onGoogleError = () => {
-        console.error('Google sign-in error');
-        alert('Google sign-in failed. Please try again.');
-        setLoading(null);
+        const backendUrl = import.meta.env.VITE_BACKEND_URL;
+        window.location.href = `${backendUrl}/auth/google`;
     };
 
     return (
@@ -84,17 +36,13 @@ const Signup: React.FC = () => {
                             Discover new music, connect with artists, and be part of a vibrant community.
                         </p>
                         <div className="w-full flex justify-center">
-                            <GoogleLogin
-                                onSuccess={onGoogleSuccess('fan')}
-                                onError={onGoogleError}
-                                useOneTap={false}
-                                auto_select={ false }
-                                theme="outline"
-                                size="large"
-                                text="signup_with"
-                                logo_alignment="left"
+                            <button
+                                onClick={() => handleGoogleSignIn('fan')}
                                 disabled={loading !== null}
-                            />
+                                className="bg-white text-gray-800 font-bold py-3 px-6 rounded-full hover:bg-gray-200 transition-colors"
+                            >
+                                Sign in as Fan
+                            </button>
                             {loading === 'fan' && (
                                 <div className="ml-3 flex items-center">
                                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
@@ -110,17 +58,13 @@ const Signup: React.FC = () => {
                             Unleash your artistry, distribute your music, and build your legacy with our powerful tools.
                         </p>
                         <div className="w-full flex justify-center">
-                            <GoogleLogin
-                                onSuccess={onGoogleSuccess('artist')}
-                                onError={onGoogleError}
-                                useOneTap={false}
-                                auto_select={ false }
-                                theme="outline"
-                                size="large"
-                                text="signup_with"
-                                logo_alignment="left"
+                            <button
+                                onClick={() => handleGoogleSignIn('artist')}
                                 disabled={loading !== null}
-                            />
+                                className="bg-white text-gray-800 font-bold py-3 px-6 rounded-full hover:bg-gray-200 transition-colors"
+                            >
+                                Sign in as Artist
+                            </button>
                             {loading === 'artist' && (
                                 <div className="ml-3 flex items-center">
                                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
