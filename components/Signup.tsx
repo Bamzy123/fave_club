@@ -1,13 +1,62 @@
-import React from 'react';
-import { GoogleLogin } from '@react-oauth/google';
+import React, { useState } from 'react';
+import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
+import axios from 'axios';
 
 const Signup: React.FC = () => {
-    // @ts-ignore
-    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+    const [loading, setLoading] = useState<'fan' | 'artist' | null>(null);
 
-    const handleGoogleLogin = () => {
-        // Correctly initiates the OAuth flow by redirecting the browser to the backend.
-        window.location.href = `${backendUrl}/auth/google`;
+    const onGoogleSuccess = (role: 'fan' | 'artist') => async (response: CredentialResponse) => {
+        const token = response.credential;
+        if (!token) {
+            console.error('Google credential is missing.');
+            alert('Google sign-in failed. Please try again.');
+            return;
+        }
+
+        setLoading(role);
+        console.log(`[${role}] Encoded JWT ID token: ${token}`);
+
+        try {
+            // Send token to your backend for verification and role-specific handling
+            const backendResponse = await axios.post('https://favebackend.onrender.com/api/auth/google', {
+                credential: token,  // Using credential instead of accessToken
+                role: role
+            });
+
+            console.log('Backend response:', backendResponse.data);
+
+            // Store token and user data
+            // localStorage.setItem('token', backendResponse.data.token);
+            // localStorage.setItem('user', JSON.stringify(backendResponse.data.user));
+            // localStorage.setItem('userRole', role);
+
+            // Redirect based on role
+            if (backendResponse.data.user.profileCompleted) {
+                window.location.href = `/${role}/Header`;
+            }
+
+        } catch (error: any) {
+            console.error('Backend API error:', error);
+
+            // Handle specific error messages from backend
+            if (error.response?.data?.message) {
+                alert(`Signup failed: ${error.response.data.message}`);
+            } else if (error.response?.status === 400) {
+                alert('Invalid request. Please try again.');
+            } else if (error.response?.status === 500) {
+                alert('Server error. Please try again later.');
+            } else {
+                alert('Network error. Please check your connection.');
+            }
+        } finally {
+            setLoading(null);
+        }
+    };
+
+    const onGoogleError = () => {
+        console.error('Google sign-in error');
+        alert('Google sign-in failed. Please try again.');
+        setLoading(null);
     };
 
     return (
@@ -34,11 +83,23 @@ const Signup: React.FC = () => {
                         <p className="mt-4 text-gray-400 flex-grow mb-8">
                             Discover new music, connect with artists, and be part of a vibrant community.
                         </p>
-                        <div className="w-full flex justify-center items-center">
-                            {/* Correctly initiating the login flow with a button redirect */}
-                            <button onClick={handleGoogleLogin} className="mt-8 bg-brand-pink text-white font-bold py-4 px-10 rounded-full text-lg hover:scale-105 transform transition-transform duration-300">
-                                Sign up with Google
-                            </button>
+                        <div className="w-full flex justify-center">
+                            <GoogleLogin
+                                onSuccess={onGoogleSuccess('fan')}
+                                onError={onGoogleError}
+                                useOneTap={false}
+                                auto_select={ false }
+                                theme="outline"
+                                size="large"
+                                text="signup_with"
+                                logo_alignment="left"
+                                disabled={loading !== null}
+                            />
+                            {loading === 'fan' && (
+                                <div className="ml-3 flex items-center">
+                                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -48,11 +109,23 @@ const Signup: React.FC = () => {
                         <p className="mt-4 text-gray-400 flex-grow mb-8">
                             Unleash your artistry, distribute your music, and build your legacy with our powerful tools.
                         </p>
-                        <div className="w-full flex justify-center items-center">
-                            {/* Correctly initiating the login flow with a button redirect */}
-                            <button onClick={handleGoogleLogin} className="mt-8 bg-brand-pink text-white font-bold py-4 px-10 rounded-full text-lg hover:scale-105 transform transition-transform duration-300">
-                                Sign up with Google
-                            </button>
+                        <div className="w-full flex justify-center">
+                            <GoogleLogin
+                                onSuccess={onGoogleSuccess('artist')}
+                                onError={onGoogleError}
+                                useOneTap={false}
+                                auto_select={ false }
+                                theme="outline"
+                                size="large"
+                                text="signup_with"
+                                logo_alignment="left"
+                                disabled={loading !== null}
+                            />
+                            {loading === 'artist' && (
+                                <div className="ml-3 flex items-center">
+                                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

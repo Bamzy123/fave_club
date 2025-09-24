@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Artistry from './components/Artistry';
@@ -6,6 +7,12 @@ import Legacy from './components/Legacy';
 import Future from './components/Future';
 import Footer from './components/Footer';
 import Signup from './components/Signup';
+import ArtistDashboard from './components/ArtistDashboard';
+import FanDashboard from './components/FanDashboard';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { MarketProvider } from './contexts/MarketContext';
+
+const clientId = '890611096481-h08nbfvc9ocbrl1iu460unabf4ge0m0v.apps.googleusercontent.com';
 
 const ChatBubble = () => (
     <button className="fixed bottom-6 right-6 bg-brand-pink text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-pink-500 transition-colors">
@@ -15,14 +22,62 @@ const ChatBubble = () => (
     </button>
 );
 
-const App: React.FC = () => {
+const MainApp: React.FC = () => {
+  const { user, loading } = useAuth();
   const [page, setPage] = useState('home');
+  const [forceDashboard, setForceDashboard] = useState<'artist' | 'fan' | null>(null);
+
+  // Check URL for direct dashboard access
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const dashboard = urlParams.get('dashboard');
+    
+    if (dashboard === 'artist') {
+      setForceDashboard('artist');
+    } else if (dashboard === 'fan') {
+      setForceDashboard('fan');
+    } else {
+      // Check the pathname for dashboard routes
+      const path = window.location.pathname;
+      if (path === '/artist/dashboard') {
+        setForceDashboard('artist');
+      } else if (path === '/fan/dashboard') {
+        setForceDashboard('fan');
+      }
+    }
+  }, []);
 
   const navigate = (pageName: string) => {
     setPage(pageName);
     window.scrollTo(0, 0);
   };
 
+  // If still loading auth state, show loading indicator
+  if (loading) {
+    return (
+      <div className="bg-brand-dark font-sans text-white overflow-x-hidden min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-pink"></div>
+      </div>
+    );
+  }
+
+  // If forcing dashboard access, show appropriate dashboard
+  if (forceDashboard === 'artist') {
+    return <ArtistDashboard />;
+  } else if (forceDashboard === 'fan') {
+    return <FanDashboard />;
+  }
+
+  // If user is logged in, show appropriate dashboard
+  if (user) {
+    if (user.role === 'artist') {
+      return <ArtistDashboard />;
+    } else if (user.role === 'fan') {
+      return <FanDashboard />;
+    }
+  }
+
+  // If not logged in, show main site
   return (
     <div className="bg-brand-dark font-sans text-white overflow-x-hidden">
       <Header onNavigate={navigate} />
@@ -39,6 +94,18 @@ const App: React.FC = () => {
       <Footer />
       <ChatBubble />
     </div>
+  );
+};
+
+const App: React.FC = () => {
+  return (
+    <GoogleOAuthProvider clientId={clientId}>
+      <AuthProvider>
+        <MarketProvider>
+          <MainApp />
+        </MarketProvider>
+      </AuthProvider>
+    </GoogleOAuthProvider>
   );
 };
 
