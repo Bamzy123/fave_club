@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
 import axios from 'axios';
-import { useAuth } from '../contexts/AuthContext';
 
 const Signup: React.FC = () => {
-    const { login, setLoading: setAuthLoading } = useAuth();
     const [loading, setLoading] = useState<'fan' | 'artist' | null>(null);
 
     const onGoogleSuccess = (role: 'fan' | 'artist') => async (response: CredentialResponse) => {
@@ -16,7 +14,6 @@ const Signup: React.FC = () => {
         }
 
         setLoading(role);
-        setAuthLoading(true);
         console.log(`[${role}] Encoded JWT ID token: ${token}`);
 
         try {
@@ -28,15 +25,15 @@ const Signup: React.FC = () => {
 
             console.log('Backend response:', backendResponse.data);
 
-            // Store token and user data in context
-            login({
-                id: backendResponse.data.user.id,
-                name: backendResponse.data.user.name,
-                email: backendResponse.data.user.email,
-                role: role,
-                profileCompleted: backendResponse.data.user.profileCompleted,
-                verified: backendResponse.data.user.verified || false
-            });
+            // Store token and user data
+            // localStorage.setItem('token', backendResponse.data.token);
+            // localStorage.setItem('user', JSON.stringify(backendResponse.data.user));
+            // localStorage.setItem('userRole', role);
+
+            // Redirect based on role
+            if (backendResponse.data.user.profileCompleted) {
+                window.location.href = `/${role}/Header`;
+            }
 
         } catch (error: any) {
             console.error('Backend API error:', error);
@@ -53,7 +50,6 @@ const Signup: React.FC = () => {
             }
         } finally {
             setLoading(null);
-            setAuthLoading(false);
         }
     };
 
@@ -61,7 +57,6 @@ const Signup: React.FC = () => {
         console.error('Google sign-in error');
         alert('Google sign-in failed. Please try again.');
         setLoading(null);
-        setAuthLoading(false);
     };
 
     return (
@@ -89,22 +84,21 @@ const Signup: React.FC = () => {
                             Discover new music, connect with artists, and be part of a vibrant community.
                         </p>
                         <div className="w-full flex justify-center">
-                            {loading === 'fan' ? (
-                                <div className="flex items-center">
+                            <GoogleLogin
+                                onSuccess={onGoogleSuccess('fan')}
+                                onError={onGoogleError}
+                                useOneTap={false}
+                                auto_select={ false }
+                                theme="outline"
+                                size="large"
+                                text="signup_with"
+                                logo_alignment="left"
+                                disabled={loading !== null}
+                            />
+                            {loading === 'fan' && (
+                                <div className="ml-3 flex items-center">
                                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-                                    <span className="ml-2">Signing in...</span>
                                 </div>
-                            ) : (
-                                <GoogleLogin
-                                    onSuccess={onGoogleSuccess('fan')}
-                                    onError={onGoogleError}
-                                    useOneTap={false}
-                                    auto_select={false}
-                                    theme="outline"
-                                    size="large"
-                                    text="signup_with"
-                                    logo_alignment="left"
-                                />
                             )}
                         </div>
                     </div>
@@ -116,22 +110,21 @@ const Signup: React.FC = () => {
                             Unleash your artistry, distribute your music, and build your legacy with our powerful tools.
                         </p>
                         <div className="w-full flex justify-center">
-                            {loading === 'artist' ? (
-                                <div className="flex items-center">
+                            <GoogleLogin
+                                onSuccess={onGoogleSuccess('artist')}
+                                onError={onGoogleError}
+                                useOneTap={false}
+                                auto_select={ false }
+                                theme="outline"
+                                size="large"
+                                text="signup_with"
+                                logo_alignment="left"
+                                disabled={loading !== null}
+                            />
+                            {loading === 'artist' && (
+                                <div className="ml-3 flex items-center">
                                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-                                    <span className="ml-2">Signing in...</span>
                                 </div>
-                            ) : (
-                                <GoogleLogin
-                                    onSuccess={onGoogleSuccess('artist')}
-                                    onError={onGoogleError}
-                                    useOneTap={false}
-                                    auto_select={false}
-                                    theme="outline"
-                                    size="large"
-                                    text="signup_with"
-                                    logo_alignment="left"
-                                />
                             )}
                         </div>
                     </div>
