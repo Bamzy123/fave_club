@@ -7,7 +7,7 @@ import Future from './components/Future';
 import Footer from './components/Footer';
 import Signup from './components/Signup';
 import ArtistDashboard from './components/ArtistDashboard';
-import FanDashboard from './components/FanDashboard';
+// import FanDashboard from './components/FanDashboard';
 
 
 const ChatBubble = () => (

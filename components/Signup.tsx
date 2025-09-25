@@ -12,8 +12,8 @@ const Signup: React.FC = () => {
         console.log('postSignup called with', { address, role });
         const endpoint =
             role === 'FAN'
-                ? 'https://favebackend.onrender.com/api/signUp/Fan'
-                : 'https://favebackend.onrender.com/api/signUp/Artist';
+                ? 'https://favebackend.onrender.com/api/login/Fan'
+                : 'https://favebackend.onrender.com/api/login/Artist';
 
         try {
             setLoading(true);
@@ -51,11 +51,11 @@ const Signup: React.FC = () => {
 
             if (cancelled) return;
 
-            if (!account?.address) {
-                toast.error('Wallet connection timed out ⏳');
-                setPendingRole(null);
-                return;
-            }
+            // if (!account?.address) {
+            //     toast.error('Wallet connection timed out ⏳');
+            //     setPendingRole(null);
+            //     return;
+            // }
 
             console.log('Connected address (effect):', account.address, 'role:', pendingRole);
             await postSignup(account.address, pendingRole);
