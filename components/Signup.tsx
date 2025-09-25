@@ -9,7 +9,7 @@ const Signup: React.FC = () => {
     const [loading, setLoading] = useState(false);
 
     const postSignup = async (address: string, role: 'FAN' | 'ARTIST') => {
-        console.log('postSignup called with', { address, role });
+        // console.log('postSignup called with', { address, role });
         const endpoint =
             role === 'FAN'
                 ? 'https://favebackend.onrender.com/api/login/Fan'
@@ -24,6 +24,21 @@ const Signup: React.FC = () => {
 
             toast.success(`Signed up as ${role} 🎉`);
             console.log('Wallet connection successful:', backendResponse.data);
+
+                // Save only the backend user id to localStorage (key: 'userId')
+                try {
+                    const data = backendResponse?.data || {};
+                    const id = data?.user._id;
+
+                    if (id) {
+                        localStorage.setItem('userId', JSON.stringify(id));
+                        console.log('aved userId to localStorage:', id);
+                    } else {
+                        console.warn('No user id found in backend response to save');
+                    }
+                } catch (e) {
+                    console.warn('Could not save userId to localStorage', e);
+            }
         } catch (err: any) {
             toast.error('Signup failed. Please try again.');
             console.error('Backend API error:', {
