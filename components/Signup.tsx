@@ -1,18 +1,77 @@
 import React, { useEffect, useState } from 'react';
 import { ConnectButton, useCurrentAccount } from '@mysten/dapp-kit';
 import axios from 'axios';
+import toast, { Toaster } from 'react-hot-toast';
 
 const Signup: React.FC = () => {
-    // @ts-ignore
-    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+    const account = useCurrentAccount();
+    const [pendingRole, setPendingRole] = useState<null | 'FAN' | 'ARTIST'>(null);
+    const [loading, setLoading] = useState(false);
 
-    const handleGoogleLogin = () => {
-        // Correctly initiates the OAuth flow by redirecting the browser to the backend.
-        window.location.href = `${backendUrl}/auth/google`;
+    const postSignup = async (address: string, role: 'FAN' | 'ARTIST') => {
+        console.log('postSignup called with', { address, role });
+        const endpoint =
+            role === 'FAN'
+                ? 'https://favebackend.onrender.com/api/signUp/Fan'
+                : 'https://favebackend.onrender.com/api/signUp/Artist';
+
+        try {
+            setLoading(true);
+            const backendResponse = await axios.post(endpoint, {
+               address: address,
+                role: role,
+            });
+
+            toast.success(`Signed up as ${role} 🎉`);
+            console.log('Wallet connection successful:', backendResponse.data);
+        } catch (err: any) {
+            toast.error('Signup failed. Please try again.');
+            console.error('Backend API error:', {
+                message: err?.message,
+                responseData: err?.response?.data,
+                status: err?.response?.status,
+                headers: err?.response?.headers,
+            });
+        } finally {
+            setLoading(false);
+        }
     };
+
+    useEffect(() => {
+        if (!pendingRole) return;
+
+        let cancelled = false;
+
+        const run = async () => {
+            const deadline = Date.now() + 8000;
+            while (!cancelled && Date.now() < deadline) {
+                if (account?.address) break;
+                await new Promise((r) => setTimeout(r, 300));
+            }
+
+            if (cancelled) return;
+
+            if (!account?.address) {
+                toast.error('Wallet connection timed out ⏳');
+                setPendingRole(null);
+                return;
+            }
+
+            console.log('Connected address (effect):', account.address, 'role:', pendingRole);
+            await postSignup(account.address, pendingRole);
+            setPendingRole(null);
+        };
+
+        run();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [pendingRole, account?.address]);
 
     return (
         <main className="relative min-h-screen flex items-center justify-center py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
+            <Toaster position="top-right" />
             <div
                 className="absolute inset-0 bg-cover bg-center bg-no-repeat"
                 style={{
@@ -39,10 +98,11 @@ const Signup: React.FC = () => {
                             of a vibrant community.
                         </p>
                         <div className="w-full flex justify-center items-center">
-                            {/* Correctly initiating the login flow with a button redirect */}
-                            <button onClick={handleGoogleLogin} className="mt-8 bg-brand-pink text-white font-bold py-4 px-10 rounded-full text-lg hover:scale-105 transform transition-transform duration-300">
-                                Sign up with Google
-                            </button>
+                            <ConnectButton
+                                connectText={loading && pendingRole === 'FAN' ? "Connecting..." : "Connect as Fan"}
+                                disabled={loading}
+                                onClick={() => setPendingRole('FAN')}
+                            />
                         </div>
                     </div>
 
@@ -54,10 +114,11 @@ const Signup: React.FC = () => {
                             build your legacy with our powerful tools.
                         </p>
                         <div className="w-full flex justify-center items-center">
-                            {/* Correctly initiating the login flow with a button redirect */}
-                            <button onClick={handleGoogleLogin} className="mt-8 bg-brand-pink text-white font-bold py-4 px-10 rounded-full text-lg hover:scale-105 transform transition-transform duration-300">
-                                Sign up with Google
-                            </button>
+                            <ConnectButton
+                                connectText={loading && pendingRole === 'ARTIST' ? "Connecting..." : "Connect as Artist"}
+                                disabled={loading}
+                                onClick={() => setPendingRole('ARTIST')}
+                            />
                         </div>
                     </div>
                 </div>
