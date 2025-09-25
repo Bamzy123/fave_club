@@ -16,30 +16,30 @@ const ChatBubble = () => (
 );
 
 const App: React.FC = () => {
-  const [page, setPage] = useState('home');
+    const [page, setPage] = useState('home');
 
-  const navigate = (pageName: string) => {
-    setPage(pageName);
-    window.scrollTo(0, 0);
-  };
+    const navigate = (pageName: string) => {
+        setPage(pageName);
+        window.scrollTo(0, 0);
+    };
 
-  return (
-    <div className="bg-brand-dark font-sans text-white overflow-x-hidden">
-      <Header onNavigate={navigate} />
-      {page === 'home' ? (
-        <main>
-          <Hero onNavigate={navigate} />
-          <Artistry onNavigate={navigate} />
-          <Legacy onNavigate={navigate} />
-          <Future onNavigate={navigate} />
-        </main>
-      ) : (
-        <Signup />
-      )}
-      <Footer />
-      <ChatBubble />
-    </div>
-  );
+    return (
+        <div className="bg-brand-dark font-sans text-white overflow-x-hidden">
+            <Header onNavigate={navigate} />
+            {page === 'home' ? (
+                <main>
+                    <Hero onNavigate={navigate} />
+                    <Artistry onNavigate={navigate} />
+                    <Legacy onNavigate={navigate} />
+                    <Future onNavigate={navigate} />
+                </main>
+            ) : (
+                <Signup />
+            )}
+            <Footer />
+            <ChatBubble />
+        </div>
+    );
 };
 
 export default App;
