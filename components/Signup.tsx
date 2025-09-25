@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { ConnectButton, useCurrentAccount } from '@mysten/dapp-kit';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const Signup: React.FC = () => {
     const account = useCurrentAccount();
     const [pendingRole, setPendingRole] = useState<null | 'FAN' | 'ARTIST'>(null);
     const [loading, setLoading] = useState(false);
+    const Navigate = useNavigate();
 
     const postSignup = async (address: string, role: 'FAN' | 'ARTIST') => {
         // console.log('postSignup called with', { address, role });
@@ -27,17 +29,25 @@ const Signup: React.FC = () => {
 
                 // Save only the backend user id to localStorage (key: 'userId')
                 try {
-                    const data = backendResponse?.data || {};
-                    const id = data?.user._id;
+                const data = backendResponse?.data || {};
+                const id = data?.user._id;
 
-                    if (id) {
-                        localStorage.setItem('userId', JSON.stringify(id));
-                        console.log('aved userId to localStorage:', id);
+                if (id) {
+                    // store as plain string for easy reading elsewhere
+                    localStorage.setItem('userId', String(id));
+                    console.log('saved userId to localStorage:', id);
+
+                    // Navigate to the proper dashboard after successful save
+                    if (role === 'ARTIST') {
+                        Navigate('/artist/dashboard');
                     } else {
-                        console.warn('No user id found in backend response to save');
+                        // navigate('/fan/dashboard'); // enable when Fan dashboard exists
                     }
-                } catch (e) {
-                    console.warn('Could not save userId to localStorage', e);
+                } else {
+                    console.warn('No user id found in backend response to save');
+                }
+            } catch (e) {
+                console.warn('Could not save userId to localStorage', e);
             }
         } catch (err: any) {
             toast.error('Signup failed. Please try again.');
