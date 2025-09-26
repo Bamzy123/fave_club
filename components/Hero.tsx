@@ -33,7 +33,7 @@ const Hero: React.FC<{ onNavigate: (page: string) => void }> = ({ onNavigate }) 
     >
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(https://picsum.photos/seed/musicconcert/1920/1080)` }}
+        style={{ backgroundImage: `url(https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=2000&q=80)` }}
       >
         <div className="absolute inset-0 bg-black/60"></div>
         <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-transparent to-transparent"></div>

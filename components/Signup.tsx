@@ -3,6 +3,7 @@ import { ConnectButton, useCurrentAccount } from '@mysten/dapp-kit';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import Header from './Header';
 
 const Signup: React.FC = () => {
     const account = useCurrentAccount();
@@ -96,11 +97,22 @@ const Signup: React.FC = () => {
 
     return (
         <main className="relative min-h-screen flex items-center justify-center py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
+            <Header onNavigate={(page: string) => {
+                if (page === 'home') {
+                    Navigate('/');
+                } else {
+                    // default to home for now; expand routing as needed
+                    Navigate('/');
+                }
+            }} />
             <Toaster position="top-right" />
             <div
                 className="absolute inset-0 bg-cover bg-center bg-no-repeat"
                 style={{
-                    backgroundImage: `url(https://picsum.photos/seed/musicstudio/1920/1080)`,
+                    // Updated to a concert/fans image for a "fans entry" vibe
+                    backgroundImage: `url(https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=2000&q=80)`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
                 }}
             >
                 <div className="absolute inset-0 bg-black/70"></div>
