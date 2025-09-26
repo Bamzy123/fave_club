@@ -15,8 +15,8 @@ const Signup: React.FC = () => {
         // console.log('postSignup called with', { address, role });
         const endpoint =
             role === 'FAN'
-                ? 'https://favebackend.onrender.com/api/login/Fan'
-                : 'https://favebackend.onrender.com/api/login/Artist';
+                ? 'https://favebackend-fqid.onrender.com/api/login/Fan'
+                : 'https://favebackend-fqid.onrender.com/api/login/Artist';
 
         try {
             setLoading(true);

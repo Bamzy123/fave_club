@@ -5,243 +5,171 @@ import Footer from './Footer';
 import axios from 'axios';
 
 interface SongData {
-  address: string;
-  imageurl: string;
-  name: string;
-  percentage: number;
-  description: string;
+    percentage: number;
 }
 
 const LoadingSpinner: React.FC = () => (
-  <svg
-    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
-    <circle
-      className="opacity-25"
-      cx="12"
-      cy="12"
-      r="10"
-      stroke="currentColor"
-      strokeWidth="4"
-    ></circle>
-    <path
-      className="opacity-75"
-      fill="currentColor"
-      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 
+    <svg
+        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+    >
+        <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+        ></circle>
+        <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2
         5.291A7.962 7.962 0 014 12H0c0 
         3.042 1.135 5.824 3 7.938l3-2.647z"
-    ></path>
-  </svg>
+        ></path>
+    </svg>
 );
 
 const ArtistDashboard: React.FC = () => {
-  const [formData, setFormData] = useState<Omit<SongData, 'percentage'> & { percentage: string }>({
-    address: '',
-    imageurl: '',
-    name: '',
-    percentage: '',
-    description: '',
-  });
+    const [formData, setFormData] = useState<SongData>({
+        percentage: 0, // Initialize with 0 (number)
+    });
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  // Prefill wallet address from localStorage
-  useEffect(() => {
-    const WALLET_KEY = 'wallet';
-    const storedWalletAddress = localStorage.getItem(WALLET_KEY) || '';
-    setFormData((prev) => ({ ...prev, address: storedWalletAddress }));
-  }, []);
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
-    setSuccessMessage(null);
-
-    if (!formData.name || !formData.imageurl || !formData.percentage || !formData.description) {
-      setError('Please fill out all fields.');
-      setIsLoading(false);
-      return;
-    }
-
-    const percentageValue = parseFloat(formData.percentage);
-    if (isNaN(percentageValue) || percentageValue < 0 || percentageValue > 200) {
-      setError('Percentage must be a number between 0 and 200.');
-      setIsLoading(false);
-      return;
-    }
-
-    const dataToSubmit: SongData = {
-      ...formData,
-      percentage: percentageValue,
+        // Only allow numbers, empty string, or minus sign at start
+        if (value) {
+            setFormData(prev => ({
+                ...prev,
+                percentage: value === '' ? 0 : parseInt(value) || 0
+            }));
+        }
     };
 
-    try {
-      const response = await axios.post('https://favebackend.onrender.com/api/artist/list', dataToSubmit
-      );
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setIsLoading(true);
+        setError(null);
+        setSuccessMessage(null);
 
-      setSuccessMessage(response.data?.message || 'Upload successful 🎉');
+        // Check if percentage is 0 or empty
+        if (formData.percentage === 0) {
+            setError('Please input a percentage.');
+            setIsLoading(false);
+            return;
+        }
 
-      // Reset form except wallet
-      setFormData((prev) => ({
-        ...prev,
-        imageurl: '',
-        name: '',
-        percentage: '',
-        description: '',
-      }));
-    } catch (err: any) {
-      setError(
-        err?.response?.data?.message ||
-          err.message ||
-          'An unexpected error occurred.'
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
+        const percentage = Number(formData.percentage);
+        console.log(percentage);
 
-  const bgStyle: React.CSSProperties = {
-    backgroundImage:
-      "linear-gradient(rgba(2,6,23,0.6), rgba(2,6,23,0.6)), url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=2000&q=80')",
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-  };
+        // Validate percentage range (1-100 as per your input constraints)
+        if (percentage < 1 || percentage > 100) {
+            setError('Percentage must be between 1 and 100.');
+            setIsLoading(false);
+            return;
+        }
 
-  const navigate = useNavigate();
+        const userId = localStorage.getItem('userId');
+        console.log('Submitting data for userId:', userId);
 
-  return (
-    <>
-      <Header onNavigate={(page: string) => navigate(page === 'signup' ? '/signup' : '/')} />
-      <main style={bgStyle} className="min-h-screen py-12 bg-fixed">
-        <div className="w-full max-w-2xl mx-auto bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-2xl shadow-blue-500/10 p-8 border border-gray-700">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-white tracking-tight">Artist Dashboard</h1>
-            <p className="text-gray-400 mt-2">Submit your new song or album details.</p>
-          </div>
+        try {
+            const response = await axios.post('https://favebackend-fqid.onrender.com/api/listSong', {
+                artistId: userId,
+                percentage: percentage,
+            });
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="address" className="block text-sm font-medium text-gray-300 mb-2">
-                Wallet Address
-              </label>
-              <input
-                type="text"
-                id="address"
-                name="address"
-                value={formData.address}
-                disabled
-                className="w-full px-4 py-2 text-white bg-gray-700 border border-gray-600 rounded-lg focus:outline-none disabled:bg-gray-700/50 disabled:cursor-not-allowed disabled:text-gray-400"
-              />
-            </div>
+            setSuccessMessage(response.data?.message || 'Upload successful 🎉');
 
-            <div>
-              <label htmlFor="imageurl" className="block text-sm font-medium text-gray-300 mb-2">
-                Image URL
-              </label>
-              <input
-                type="text"
-                id="imageurl"
-                name="imageurl"
-                value={formData.imageurl}
-                onChange={handleInputChange}
-                placeholder="https://example.com/album-art.jpg"
-                className="w-full px-4 py-2 text-white bg-gray-900/50 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+            // Reset form
+            setFormData({
+                percentage: 0,
+            });
+        } catch (err: any) {
+            setError(
+                err?.response?.data?.message ||
+                err.message ||
+                'An unexpected error occurred.'
+            );
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
-                Song/Album Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                placeholder="Enter the name"
-                className="w-full px-4 py-2 text-white bg-gray-900/50 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+    const bgStyle: React.CSSProperties = {
+        backgroundImage:
+            "linear-gradient(rgba(2,6,23,0.6), rgba(2,6,23,0.6)), url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=2000&q=80')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+    };
 
-            <div>
-              <label htmlFor="percentage" className="block text-sm font-medium text-gray-300 mb-2">
-                Percentage
-              </label>
-              <input
-                type="number"
-                id="percentage"
-                name="percentage"
-                value={formData.percentage}
-                onChange={handleInputChange}
-                placeholder="e.g., 10.5"
-                step="0.01"
-                min="0"
-                max="100"
-                className="w-full px-4 py-2 text-white bg-gray-900/50 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+    return (
+        <>
+            <main style={bgStyle} className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 bg-fixed">
+                <div className="w-full max-w-2xl mx-auto bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-2xl shadow-blue-500/10 p-8 border border-gray-700">
+                    <div className="text-center mb-8">
+                        <h1 className="text-4xl font-bold text-white tracking-tight">Artist Dashboard</h1>
+                        <p className="text-gray-400 mt-2">Submit your new song or album details.</p>
+                    </div>
 
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-300 mb-2">
-                Description
-              </label>
-              <textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                rows={4}
-                placeholder="A short description of the song or album"
-                className="w-full px-4 py-2 text-white bg-gray-900/50 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              ></textarea>
-            </div>
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div>
+                            <label htmlFor="percentage" className="block text-sm font-medium text-gray-300 mb-2">
+                                Percentage
+                            </label>
+                            <input
+                                type="text" // Changed to text to have better control
+                                inputMode="numeric" // Shows numeric keyboard on mobile
+                                pattern="[0-9]*" // HTML5 pattern for numbers only
+                                id="percentage"
+                                name="percentage"
+                                value={formData.percentage}
+                                onChange={handleInputChange}
+                                placeholder="e.g., 10"
+                                min="1"
+                                max="100"
+                                className="w-full px-4 py-2 text-white bg-gray-900/50 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
+                        {error && (
+                            <div className="p-4 text-sm text-red-300 bg-red-800/50 rounded-lg" role="alert">
+                                {error}
+                            </div>
+                        )}
+                        {successMessage && (
+                            <div className="p-4 text-sm text-green-300 bg-green-800/50 rounded-lg" role="alert">
+                                {successMessage}
+                            </div>
+                        )}
 
-            {error && (
-              <div className="p-4 text-sm text-red-300 bg-red-800/50 rounded-lg" role="alert">
-                {error}
-              </div>
-            )}
-            {successMessage && (
-              <div className="p-4 text-sm text-green-300 bg-green-800/50 rounded-lg" role="alert">
-                {successMessage}
-              </div>
-            )}
-
-            <div>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className ="w-full flex items-center justify-center px-6 py-3 text-base font-semibold text-white rounded-full shadow-lg transform-gpu transition-all duration-200 bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 hover:scale-[1.02] hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-pink-400/30 disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                {isLoading ? (
-                  <>
-                    <LoadingSpinner /> Processing...
-                  </>
-                ) : (
-                  'Submit Details'
-                )}
-              </button>
-            </div>
-          </form>
-        </div>
-      </main>
-      <Footer />
-    </>
-  );
+                        <div>
+                            <button
+                                type="submit"
+                                disabled={isLoading}
+                                className="w-full flex items-center justify-center px-6 py-3 text-base font-semibold text-white rounded-full shadow-lg transform-gpu transition-all duration-200 bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 hover:scale-[1.02] hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-pink-400/30 disabled:opacity-60 disabled:cursor-not-allowed"
+                            >
+                                {isLoading ? (
+                                    <>
+                                        <LoadingSpinner /> Processing...
+                                    </>
+                                ) : (
+                                    'Submit Details'
+                                )}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </main>
+            <Footer />
+        </>
+    );
 };
 
 export default ArtistDashboard;

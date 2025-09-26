@@ -71,7 +71,7 @@ const Artistry: React.FC<{ onNavigate: (page: string) => void }> = ({ onNavigate
             className={`bg-brand-dark py-20 px-6 md:px-12 transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
         >
             <div className="container mx-auto text-center">
-                <h2 className="font-serif text-5xl font-bold">Exclusive Drops from Nigerian Stars</h2>
+                <h2 className="font-serif text-5xl font-bold text-white">Exclusive Drops from Nigerian Stars</h2>
                 <p className="mt-4 max-w-2xl mx-auto text-gray-400">
                     Get exclusive access to unreleased tracks and demos from your favorite artists. Be the first to hear the future of Afrobeats.
                 </p>

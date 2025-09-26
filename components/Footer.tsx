@@ -3,7 +3,7 @@ import React from 'react';
 const FooterLogo: React.FC = () => (
     <div className="flex items-center space-x-3">
         <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center">
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 21a9 9 0 100-18 9 9 0 000 18z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 9a3 3 0 013-3v0a3 3 0 013 3v5a3 3 0 01-3 3v0a3 3 0 01-3-3V9z"></path></svg>
+            <img src="/fave-removebg-preview.png" alt="Fave" className="h-20 w-30 rounded full" />
         </div>
     </div>
 );

@@ -49,7 +49,7 @@ const Future: React.FC<{ onNavigate: (page: string) => void }> = ({ onNavigate }
             <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                 <div className="text-center lg:text-left">
                     <p className="text-brand-yellow font-semibold">The Next Wave</p>
-                    <h2 className="font-serif text-5xl md:text-6xl font-bold mt-2">
+                    <h2 className="font-serif text-5xl md:text-6xl text-white font-bold mt-2">
                         Welcome to the <br/> Future of Music
                     </h2>
                     <p className="mt-6 text-gray-400 max-w-md mx-auto lg:mx-0">

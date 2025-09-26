@@ -8,7 +8,9 @@ import Legacy from './components/Legacy';
 import Future from './components/Future';
 import Footer from './components/Footer';
 import Signup from './components/Signup';
+import Contact from './components/Contact';
 import ArtistDashboard from './components/ArtistDashboard';
+import WalletPanel from './components/WalletPanel';
 // import FanDashboard from './components/FanDashboard';
 
 const ChatBubble = () => (
@@ -50,6 +52,8 @@ const App: React.FC = () => {
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/artist/dashboard" element={<ArtistDashboard />} />
                 {/* <Route path="/fan/dashboard" element={<FanDashboard />} /> */}
+                <Route path='/contact' element={<Contact />} />
+                <Route path="/wallet" element={<WalletPanel />} />
             </Routes>
         </Router>
     );
