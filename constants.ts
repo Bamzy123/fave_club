@@ -5,9 +5,9 @@ export const MOCK_PROJECTS: Project[] = [
     {
         id: 1,
         imageUrl: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fG11c2ljfGVufDB8fDB8fHww',
-        title: 'Echoes of Tomorrow',
+        title: 'CHOKO - Echoes of Tomorrow',
         description: 'A soulful blend of rhythm and melody that captures hope, resilience, and the power of dreams. With its uplifting beats ' +
-            'and smooth harmonies, Echoes of Tomorrow takes listeners on a journey of reflection and inspiration—perfect for moments of' +
+            'and smooth harmonies, CHOKO takes listeners on a journey of reflection and inspiration—perfect for moments of' +
             ' motivation or late-night vibes.',
         progress: 80,
     },

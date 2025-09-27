@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import {BrowserRouter as Router, Routes, Route, useNavigate, Navigate} from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -71,6 +72,7 @@ const App: React.FC = () => {
     return (
         <Router>
             <div className={`min-h-screen font-sans ${backgroundClass} transition-colors duration-500`}>
+                <Toaster position="top-right" />
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/signup" element={<Signup />} />
