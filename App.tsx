@@ -36,7 +36,6 @@ const ChatBubble = () => (
     </button>
 );
 
-// ✅ Home page
 const Home: React.FC = () => {
     const navigate = useNavigate();
 
@@ -63,7 +62,6 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
     return <>{children}</>;
 };
 
-// ✅ Main App
 const App: React.FC = () => {
     const [view, setView] = useState<View>(View.Artist);
     const [artistProfilePic, setArtistProfilePic] = useState<string | null>(null);
