@@ -41,12 +41,12 @@ const Hero: React.FC<{ onNavigate: (page: string) => void }> = ({ onNavigate }) 
       <div className="relative z-10 px-4">
         <h1 className="font-serif text-6xl md:text-8xl font-bold leading-tight">
           <span className="relative inline-block">
-            Own a Piece Of the Music You
+            Own a piece of the mm
             <span className="absolute left-0 bottom-0 -mb-2 transform -translate-x-1/4 w-24 h-2 bg-brand-yellow"></span>
-          </span> Love
+          </span> Fave
         </h1>
         <p className="mt-4 max-w-lg mx-auto text-lg text-gray-300">
-          Become more than  fan.
+          Discover, create, and share music like never before. Your journey in sound starts here.
         </p>
         <button onClick={() => onNavigate('signup')} className="mt-8 bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 hover:scale-[1.02] hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-pink-400/30 text-white font-bold py-4 px-10 rounded-full text-lg hover:scale-105 transform transition-transform duration-300">
           Explore Now

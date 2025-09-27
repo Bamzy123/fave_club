@@ -33,5 +33,5 @@
     "contexts",
     "App.tsx",
     "index.tsx"
-, "vite-env.d.ts", "services", "types.ts"  ]
+, "vite-env.d.ts"  ]
 }

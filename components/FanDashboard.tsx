@@ -1,40 +1,41 @@
+
 import React from 'react';
+import type { Project } from '../types';
+import { View } from '../types';
 import ProfileUploader from './ProfileUploader';
-import SongList from './SongList';
-import { Song } from '../types';
+import ProjectCard from './ProjectCard';
 
 interface FanDashboardProps {
-  songs: Song[];
+    profilePic: string | null;
+    setProfilePic: (url: string) => void;
+    projects: Project[];
 }
 
-const FanDashboard: React.FC<FanDashboardProps> = ({ songs }) => {
-  return (
-    <div 
-      className="min-h-screen bg-cover bg-center bg-fixed text-white" 
-      style={{ backgroundImage: "url('https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=2000&q=80')" }}
-    >
-      <div className="min-h-screen bg-black/60 backdrop-blur-sm">
-        <main className="container mx-auto p-4 sm:p-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <aside className="lg:col-span-4 xl:col-span-3 p-6 bg-black/30 border border-white/20 rounded-2xl flex flex-col items-center space-y-8 h-fit">
-              <ProfileUploader 
-                storageKey="fan_dashboard_profile_image"
-                defaultImage="https://picsum.photos/seed/fan/200"
-                title="Fan Profile"
-              />
-            </aside>
-
-            <section className="lg:col-span-8 xl:col-span-9">
-              <div className="p-6 bg-black/30 border border-white/20 rounded-2xl">
-                <h1 className="text-3xl font-bold mb-6 tracking-wide">Fresh Tracks</h1>
-                <SongList songs={songs} isLoading={false} error={null} />
-              </div>
-            </section>
-          </div>
-        </main>
-      </div>
-    </div>
-  );
+const FanDashboard: React.FC<FanDashboardProps> = ({ profilePic, setProfilePic, projects }) => {
+    return (
+        <div className="container mx-auto">
+            <div className="flex flex-col md:flex-row gap-8 items-start">
+                <aside className="w-full md:w-1/4 xl:w-1/5">
+                    <div className="bg-white rounded-xl p-6 sticky top-8 text-center shadow-lg border border-gray-200">
+                        <ProfileUploader profilePic={profilePic} setProfilePic={setProfilePic} />
+                        <h2 className="text-2xl font-bold mt-4 text-gray-800">Music Fan</h2>
+                        <p className="text-blue-600 font-medium">Stephen</p>
+                        <p className="text-sm text-gray-500 mt-2">
+                            Invest in your favorite artists.
+                        </p>
+                    </div>
+                </aside>
+                <section className="w-full md:w-3/4 xl:w-4/5">
+                    <h1 className="text-3xl font-bold mb-6 text-blue-600 tracking-wider">Artist Unreleases</h1>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                        {projects.map((project) => (
+                            <ProjectCard key={project.id} project={project} viewType={View.Fan} />
+                        ))}
+                    </div>
+                </section>
+            </div>
+        </div>
+    );
 };
 
 export default FanDashboard;
