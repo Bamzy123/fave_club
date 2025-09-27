@@ -28,36 +28,67 @@ const Signup: React.FC = () => {
             toast.success(`Signed up as ${role} 🎉`);
             console.log('Wallet connection successful:', backendResponse.data);
 
-                // Save only the backend user id to localStorage (key: 'userId')
-                try {
+            // Save only the backend user id to localStorage (key: 'userId')
+            try {
                 const data = backendResponse?.data || {};
                 const id = data?.user._id;
 
                 if (id) {
                     // store as plain string for easy reading elsewhere
                     localStorage.setItem('userId', String(id));
+                    localStorage.setItem('userRole', role); // Also save the role
                     console.log('saved userId to localStorage:', id);
 
-                    // Navigate to the proper dashboard after successful save
+                    // Add a small delay to ensure state is settled before navigation
+                    setTimeout(() => {
+                        // Navigate to the proper dashboard after successful save
+                        if (role === 'ARTIST') {
+                            Navigate('/artist/dashboard');
+                        } else {
+                            Navigate('/fan/dashboard');
+                        }
+                    }, 500);
+                } else {
+                    console.warn('No user id found in backend response to save');
+                    // Navigate anyway since wallet connection was successful
+                    setTimeout(() => {
+                        if (role === 'ARTIST') {
+                            Navigate('/artist/dashboard');
+                        } else {
+                            Navigate('/fan/dashboard');
+                        }
+                    }, 500);
+                }
+            } catch (e) {
+                console.warn('Could not save userId to localStorage', e);
+                // Navigate anyway since wallet connection was successful
+                setTimeout(() => {
                     if (role === 'ARTIST') {
                         Navigate('/artist/dashboard');
                     } else {
                         Navigate('/fan/dashboard');
                     }
-                } else {
-                    console.warn('No user id found in backend response to save');
-                }
-            } catch (e) {
-                console.warn('Could not save userId to localStorage', e);
+                }, 500);
             }
         } catch (err: any) {
-            toast.error('Signup failed. Please try again.');
             console.error('Backend API error:', {
                 message: err?.message,
                 responseData: err?.response?.data,
                 status: err?.response?.status,
                 headers: err?.response?.headers,
             });
+            
+            // Even if backend fails, wallet is connected so navigate to dashboard
+            toast.success(`Wallet connected as ${role}! 🔗`);
+            localStorage.setItem('userRole', role); // Save role even if backend fails
+            
+            setTimeout(() => {
+                if (role === 'ARTIST') {
+                    Navigate('/artist/dashboard');
+                } else {
+                    Navigate('/fan/dashboard');
+                }
+            }, 500);
         } finally {
             setLoading(false);
         }

@@ -1,4 +1,6 @@
 import React from 'react';
+import { useCurrentAccount } from '@mysten/dapp-kit';
+import { useNavigate } from 'react-router-dom';
 
 const Logo: React.FC<{ onClick: () => void }> = ({ onClick }) => (
     <div className="flex items-center space-x-3 cursor-pointer" onClick={onClick}>
@@ -8,6 +10,24 @@ const Logo: React.FC<{ onClick: () => void }> = ({ onClick }) => (
 
 
 const Header: React.FC<{ onNavigate: (page: string) => void }> = ({ onNavigate }) => {
+    const account = useCurrentAccount();
+    const navigate = useNavigate();
+    const userRole = localStorage.getItem('userRole');
+
+    const handleDashboardClick = () => {
+        if (!account) {
+            onNavigate('signup');
+            return;
+        }
+        
+        if (userRole === 'ARTIST') {
+            navigate('/artist/dashboard');
+        } else if (userRole === 'FAN') {
+            navigate('/fan/dashboard');
+        } else {
+            onNavigate('signup');
+        }
+    };
   return (
     <header className="absolute top-0 left-0 right-0 z-10 p-6 md:px-12">
         <div className="container mx-auto flex justify-between items-center">
@@ -15,7 +35,18 @@ const Header: React.FC<{ onNavigate: (page: string) => void }> = ({ onNavigate }
             <nav className="hidden md:flex space-x-10 items-center">
                 <button onClick={() => onNavigate('home')} className="text-white hover:text-brand-pink transition-colors">Home</button>
                 <button className="text-white hover:text-brand-pink transition-colors">About</button>
+                {account && (
+                    <button 
+                        onClick={handleDashboardClick} 
+                        className="text-white hover:text-brand-pink transition-colors font-medium"
+                    >
+                        {userRole === 'ARTIST' ? 'Artist Dashboard' : userRole === 'FAN' ? 'Fan Dashboard' : 'Dashboard'}
+                    </button>
+                )}
                 <button onClick={() => onNavigate('contact')} className="text-white border border-white px-6 py-2 rounded-full hover:bg-white hover:text-brand-dark transition-colors">Contact</button>
+                {!account && (
+                    <button onClick={() => onNavigate('signup')} className="bg-brand-pink text-white px-6 py-2 rounded-full hover:bg-pink-500 transition-colors">Connect Wallet</button>
+                )}
             </nav>
             <button className="md:hidden text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
