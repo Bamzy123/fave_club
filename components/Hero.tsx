@@ -46,7 +46,7 @@ const Hero: React.FC<{ onNavigate: (page: string) => void }> = ({ onNavigate }) 
           </span> Love
         </h1>
         <p className="mt-4 max-w-lg mx-auto text-lg text-gray-300">
-          Discover, create, and share music like never before. Your journey in sound starts here.
+          Become more than a fan.
         </p>
         <button onClick={() => onNavigate('signup')} className="mt-8 bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 hover:scale-[1.02] hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-pink-400/30 text-white font-bold py-4 px-10 rounded-full text-lg hover:scale-105 transform transition-transform duration-300">
           Explore Now
