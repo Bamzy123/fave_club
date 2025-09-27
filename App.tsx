@@ -54,14 +54,6 @@ const Home: React.FC = () => {
     );
 };
 
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const userId = localStorage.getItem('userId');
-    if (!userId) {
-        return <Navigate to="/signup" replace />;
-    }
-    return <>{children}</>;
-};
-
 const App: React.FC = () => {
     const [view, setView] = useState<View>(View.Artist);
     const [artistProfilePic, setArtistProfilePic] = useState<string | null>(null);
@@ -83,25 +75,21 @@ const App: React.FC = () => {
                     <Route
                         path="/artist/dashboard"
                         element={
-                        <ProtectedRoute>
                             <ArtistDashboard
                                 profilePic={artistProfilePic}
                                 setProfilePic={setFanProfilePic}
                                 projects={projects}
                             />
-                        </ProtectedRoute>
                         }
                     />
                     <Route
                         path="/fan/dashboard"
                         element={
-                        <ProtectedRoute>
                             <FanDashboard
                                 profilePic={fanProfilePic}
                                 setProfilePic={setFanProfilePic}
                                 projects={projects}
                             />
-                        </ProtectedRoute>
                         }
                     />
                     <Route path="/contact" element={<Contact />} />
