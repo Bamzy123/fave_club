@@ -41,7 +41,7 @@ const Hero: React.FC<{ onNavigate: (page: string) => void }> = ({ onNavigate }) 
       <div className="relative z-10 px-4">
         <h1 className="font-serif text-6xl md:text-8xl font-bold leading-tight">
           <span className="relative inline-block">
-            Welcome to
+            Own a piece of the mm
             <span className="absolute left-0 bottom-0 -mb-2 transform -translate-x-1/4 w-24 h-2 bg-brand-yellow"></span>
           </span> Fave
         </h1>

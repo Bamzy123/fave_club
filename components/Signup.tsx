@@ -42,7 +42,7 @@ const Signup: React.FC = () => {
                     if (role === 'ARTIST') {
                         Navigate('/artist/dashboard');
                     } else {
-                        // navigate('/fan/dashboard'); // enable when Fan dashboard exists
+                        Navigate('/fan/dashboard');
                     }
                 } else {
                     console.warn('No user id found in backend response to save');
