@@ -1,6 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import {BrowserRouter as Router, Routes, Route, useNavigate, Navigate} from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -11,22 +10,12 @@ import Footer from './components/Footer';
 import Signup from './components/Signup';
 import Contact from './components/Contact';
 import ArtistDashboard from './components/ArtistDashboard';
-import FanDashboard from './components/FanDashboard';
 import WalletPanel from './components/WalletPanel';
-
-import type { Project } from './types';
-import { View } from './types';
-import { MOCK_PROJECTS } from './constants';
+// import FanDashboard from './components/FanDashboard';
 
 const ChatBubble = () => (
     <button className="fixed bottom-6 right-6 bg-brand-pink text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-pink-500 transition-colors">
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-7 w-7"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-        >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -37,7 +26,6 @@ const ChatBubble = () => (
     </button>
 );
 
-// ✅ Home page
 const Home: React.FC = () => {
     const navigate = useNavigate();
 
@@ -56,50 +44,17 @@ const Home: React.FC = () => {
     );
 };
 
-// ✅ Main App
 const App: React.FC = () => {
-    const [view, setView] = useState<View>(View.Artist);
-    const [artistProfilePic, setArtistProfilePic] = useState<string | null>(null);
-    const [fanProfilePic, setFanProfilePic] = useState<string | null>(null);
-    const [projects, setProjects] = useState<Project[]>(MOCK_PROJECTS);
-
-    const backgroundClass = useMemo(() => {
-        return view === View.Artist
-            ? 'bg-gray-900 text-white'
-            : 'bg-slate-100 text-gray-800';
-    }, [view]);
-
     return (
         <Router>
-            <div className={`min-h-screen font-sans ${backgroundClass} transition-colors duration-500`}>
-                <Toaster position="top-right" />
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/signup" element={<Signup />} />
-                    <Route
-                        path="/artist/dashboard"
-                        element={
-                            <ArtistDashboard
-                                profilePic={artistProfilePic}
-                                setProfilePic={setFanProfilePic}
-                                projects={projects}
-                            />
-                        }
-                    />
-                    <Route
-                        path="/fan/dashboard"
-                        element={
-                            <FanDashboard
-                                profilePic={fanProfilePic}
-                                setProfilePic={setFanProfilePic}
-                                projects={projects}
-                            />
-                        }
-                    />
-                    <Route path="/contact" element={<Contact />} />
-                    <Route path="/wallet" element={<WalletPanel />} />
-                </Routes>
-            </div>
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/artist/dashboard" element={<ArtistDashboard />} />
+                {/* <Route path="/fan/dashboard" element={<FanDashboard />} /> */}
+                <Route path='/contact' element={<Contact />} />
+                <Route path="/wallet" element={<WalletPanel />} />
+            </Routes>
         </Router>
     );
 };
